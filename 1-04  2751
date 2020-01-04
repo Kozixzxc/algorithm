@@ -1,0 +1,198 @@
+
+import java.util.*;
+
+class Point implements Comparable<Point> {
+
+    int x, y;
+
+    Point(int x, int y) {
+
+        this.x = x;
+
+        this.y = y;
+
+    }
+
+    public int compareTo(Point that) {
+
+        if (this.x < that.x) {
+
+            return -1;
+
+        } else if (this.x == that.x) {
+
+            if (this.y < that.y) {
+
+                return -1;
+
+            } else if (this.y == that.y) {
+
+                return 0;
+
+            } else {
+
+                return 1;
+
+            }
+
+        } else {
+
+            return 1;
+
+        }
+
+    }
+
+}
+
+public class Main {
+
+    static int dist(Point p1, Point p2) {
+
+        return (p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y);
+
+    }
+
+    static int brute_force(Point[] a, int x, int y) {
+
+        int ans = -1;
+
+        for (int i=x; i<=y-1; i++) {
+
+            for (int j=i+1; j<=y; j++) {
+
+                int d = dist(a[i], a[j]);
+
+                if (ans == -1 || ans > d) {
+
+                    ans = d;
+
+                }
+
+            }
+
+        }
+
+        return ans;
+
+    }
+
+    static int closest(Point[] a, int x, int y) {
+
+        int n = y-x+1;
+
+        if (n <= 3) {
+
+            return brute_force(a, x, y);
+
+        }
+
+        int mid = (x+y)/2;
+
+        int left = closest(a, x, mid);
+
+        int right = closest(a, mid+1, y);
+
+        int ans = Math.min(left, right);
+
+        ArrayList<Point> b = new ArrayList<>();
+
+        for (int i=x; i<=y; i++) {
+
+            int d = a[i].x - a[mid].x;
+
+            if (d*d < ans) {
+
+                b.add(a[i]);
+
+            }
+
+        }
+
+        Collections.sort(b, new Comparator<Point>() {
+
+            public int compare(Point p1, Point p2) {
+
+                if (p1.y < p2.y) {
+
+                    return -1;
+
+                } else if (p1.y == p2.y) {
+
+                    if (p1.x < p2.x) {
+
+                        return -1;
+
+                    } else if (p1.x == p2.x) {
+
+                        return 0;
+
+                    } else {
+
+                        return 1;
+
+                    }
+
+                } else {
+
+                    return 1;
+
+                }
+
+            }
+
+        });
+
+        int m = b.size();
+
+        for (int i=0; i<m-1; i++) {
+
+            for (int j=i+1; j<m; j++) {
+
+                int dy = b.get(j).y - b.get(i).y;
+
+                if (dy*dy < ans) { 
+
+                    int d = dist(b.get(i), b.get(j));
+
+                    if (d < ans) {
+
+                        ans = d;
+
+                    }
+
+                } else {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+        return ans;
+
+    }
+
+    public static void main(String args[]) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        Point[] a = new Point[n];
+
+        for (int i=0; i<n; i++) {
+
+            a[i] = new Point(sc.nextInt(), sc.nextInt());
+
+        }
+
+        Arrays.sort(a);
+
+        System.out.println(closest(a, 0, n-1));
+
+    }
+
+}
