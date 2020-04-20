@@ -1,0 +1,39 @@
+import java.util.*;
+public class Main {
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.next();
+        ArrayList<Integer> num = new ArrayList<>();
+        ArrayList<Integer> sign = new ArrayList<>();
+        boolean minus = false;
+        int cur = 0;
+        sign.add(1);
+        for (char x : s.toCharArray()) {
+            if (x == '+' || x == '-') {
+                if (x == '+') {
+                    sign.add(1);
+                } else {
+                    sign.add(-1);
+                }
+                num.add(cur);
+                cur = 0;
+            } else {
+                cur = cur * 10 + (x - '0');
+            }
+        }
+        num.add(cur);
+        int ans = 0;
+        minus = false;
+        for (int i=0; i<num.size(); i++) {
+            if (sign.get(i) == -1) {
+                minus = true;
+            }
+            if (minus) {
+                ans -= num.get(i);
+            } else {
+                ans += num.get(i);
+            }
+        }
+        System.out.println(ans);
+    }
+}
