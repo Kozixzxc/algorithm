@@ -1,0 +1,76 @@
+import java.util.*;
+class Pair {
+    int x, y;
+    Pair(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+public class Main {
+    public static int n;
+    public static int[][] a = new int[100][100];
+    public static boolean[][] c = new boolean[100][100];
+    public static int[] dx = {1, -1, 0, 0};
+    public static int[] dy = {0, 0, 1, -1};
+    public static boolean bfs(int mn, int mx) {
+        if (mn > a[0][0] || mx < a[0][0]) {
+            return false;
+        }
+        for (int i=0; i<n; i++) {
+            for (int j=0; j<n; j++) {
+                c[i][j] = false;
+            }
+        }
+        Queue<Pair> q = new LinkedList<Pair>();
+        q.add(new Pair(0, 0));
+        c[0][0] = true;
+        while (!q.isEmpty()) {
+            Pair p = q.remove();
+            int x = p.x;
+            int y = p.y;
+            for (int k=0; k<4; k++) {
+                int nx = x+dx[k];
+                int ny = y+dy[k];
+                if (0 <= nx && nx < n && 0 <= ny && ny < n) {
+                    if (c[nx][ny] == false) {
+                        if (mn <= a[nx][ny] && a[nx][ny] <= mx) {
+                            q.add(new Pair(nx, ny));
+                            c[nx][ny] = true;
+                        }
+                    }
+                }
+            }
+        }
+        return c[n-1][n-1];
+    }
+    public static boolean go(int diff) {
+        for (int mn=0; mn+diff<=200; mn++) {
+            if (bfs(mn, mn+diff)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        n = sc.nextInt();
+        for (int i=0; i<n; i++) {
+            for (int j=0; j<n; j++) {
+                a[i][j] = sc.nextInt();
+            }
+        }
+        int left = 0;
+        int right = 200;
+        int ans = 200;
+        while (left <= right) {
+            int mid = (left + right)/2;
+            if (go(mid)) {
+                right = mid-1;
+                ans = Math.min(ans, mid);
+            } else {
+                left = mid+1;
+            }
+        }
+        System.out.println(ans);
+    }
+}
